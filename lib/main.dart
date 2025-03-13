@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quizz/app_brain.dart';
 
+AppBrain appBrain = AppBrain();
 void main() {
   runApp(quizApp());
 }
@@ -13,7 +15,13 @@ class quizApp extends StatelessWidget {
         backgroundColor: Color.fromARGB(255, 255, 237, 222),
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 219, 118, 50),
-          title: Text('Quiz'),
+          title: Text('Quiz',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 30.0,
+            fontWeight: FontWeight.bold,
+          ),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -32,18 +40,50 @@ class quizPage extends StatefulWidget {
 }
 
 class _quizPageState extends State<quizPage> {
+  
+  List<Padding> answerResult = [];
+
+  void checkAnswer(bool picked){
+    bool correctAnswer = appBrain.getQuestionAnswer();
+    setState(() {
+      if (picked == correctAnswer) {
+        answerResult.add(
+          Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: Icon(Icons.thumb_up, color: Colors.green),
+          ),
+        );
+      } else {
+        answerResult.add(
+          Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: Icon(Icons.thumb_down, color: Colors.red),
+          ),
+        );
+      }
+
+      appBrain.nextQuestion();
+    });
+
+  }
+ 
+  
   @override
+
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Row(
+          children: answerResult,
+          ),
         Expanded(
           flex: 5,
           child: Column( children: [
-            Image.asset('images/image-1.jpg'),
+            Image.asset(appBrain.getQuestionImage()),
             SizedBox(height: 20.0),
 
-            Text('The solar system has eight planets',
+            Text(appBrain.getQuestionText(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24.0,
@@ -66,11 +106,13 @@ class _quizPageState extends State<quizPage> {
                   color: Colors.white,
                 ),
               ),
-              onPressed: (){},
+              onPressed: (){
+                checkAnswer(true);
+               
+              },
               ),
           ),
             ),
-            //SizedBox(),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -84,7 +126,9 @@ class _quizPageState extends State<quizPage> {
                 color: Colors.white,
               ),
               ),
-              onPressed: (){},
+              onPressed: (){
+                checkAnswer(false);
+              },
               ),
           ),
             ),
