@@ -62,6 +62,17 @@ import 'package:quizz/question.dart';
     }
   }
 
+  bool isFinished(){
+    if(_questionNumber >= _questionGroup.length - 1){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void reset(){
+    _questionNumber = 0;
+  }
 
 
 }

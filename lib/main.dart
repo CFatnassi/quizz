@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quizz/app_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 AppBrain appBrain = AppBrain();
 void main() {
@@ -43,10 +44,13 @@ class _quizPageState extends State<quizPage> {
   
   List<Padding> answerResult = [];
 
+  int rightAnswers = 0;
+
   void checkAnswer(bool picked){
     bool correctAnswer = appBrain.getQuestionAnswer();
     setState(() {
       if (picked == correctAnswer) {
+        rightAnswers++;
         answerResult.add(
           Padding(
             padding: const EdgeInsets.all(3.0),
@@ -62,7 +66,28 @@ class _quizPageState extends State<quizPage> {
         );
       }
 
-      appBrain.nextQuestion();
+      if (appBrain.isFinished()) {
+        Alert(
+          context: context,
+          title: "Quiz ended",
+          desc: "You have correctly answered $rightAnswers out of 7 questions",
+          buttons: [
+            DialogButton(
+              child: Text(
+                "Start agian",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: () => Navigator.pop(context),
+              width: 120,
+            ),
+          ],
+        ).show();
+        appBrain.reset();
+        answerResult = []; //empty icon list
+        rightAnswers = 0;
+      } else {
+        appBrain.nextQuestion();
+      }
     });
 
   }
@@ -108,6 +133,7 @@ class _quizPageState extends State<quizPage> {
               ),
               onPressed: (){
                 checkAnswer(true);
+                
                
               },
               ),
